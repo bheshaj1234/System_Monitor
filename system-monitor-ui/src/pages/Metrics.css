@@ -1,0 +1,65 @@
+.metrics-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.metrics-card {
+  width: 100%;
+  max-width: 900px;
+  background: #020617;
+  padding: 40px;
+  border-radius: 12px;  
+  box-shadow: 0 0 40px rgba(56,189,248,0.15);
+  text-align: center;
+}
+
+.metrics-card h2 {
+  color: #38bdf8;
+  margin-bottom: 30px;
+}
+
+.stats-grid {
+  display: grid;
+  color: white;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.info-text {
+  color: #94a3b8;
+}
+
+.error {
+  background: #7f1d1d;
+  color: #fecaca;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 13px;
+}
+
+.service-list {
+  margin-top: 30px;
+}
+
+.service-card {
+  background: #111827;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  color: white;
+}
+
+.up {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.down {
+  color: #ef4444;
+  font-weight: bold;
+}
