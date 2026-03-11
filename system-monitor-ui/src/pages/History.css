@@ -1,0 +1,167 @@
+/* ================= PAGE BACKGROUND ================= */
+
+.history-page{
+  min-height:100vh;
+  padding:40px 20px;
+
+  background: linear-gradient(135deg,#0f172a,#020617);
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  color:white;
+}
+
+/* ================= TITLE ================= */
+
+.history-page h2{
+  margin-bottom:25px;
+  font-size:26px;
+  color:#38bdf8;
+  letter-spacing:0.5px;
+}
+
+/* ================= CARD ================= */
+
+.history-card{
+  width:100%;
+  max-width:1000px;
+
+  background:rgba(2,6,23,0.9);
+  backdrop-filter: blur(10px);
+
+  border-radius:16px;
+  padding:25px;
+
+  border:1px solid rgba(56,189,248,0.15);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.5),
+    0 0 20px rgba(56,189,248,0.08);
+}
+
+/* ================= TABLE ================= */
+
+.history-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+
+.history-table thead{
+  background:#020617;
+}
+
+.history-table th{
+  padding:14px;
+  color:#94a3b8;
+  font-weight:600;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.history-table td{
+  padding:14px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  text-align:center;
+}
+
+/* Hover row */
+
+.history-table tbody tr:hover{
+  background:rgba(56,189,248,0.05);
+}
+
+/* ================= STATUS ================= */
+
+.up{
+  color:#22c55e;
+  font-weight:600;
+}
+
+.down{
+  color:#ef4444;
+  font-weight:600;
+}
+
+/* ================= PAGINATION ================= */
+
+.pagination{
+  margin-top:25px;
+  display:flex;
+  gap:15px;
+  align-items:center;
+  justify-content:center;
+}
+
+.pagination span{
+  color:#cbd5e1;
+  font-size:14px;
+}
+
+/* Pagination buttons */
+
+.pagination button{
+
+  padding:8px 16px;
+  border:none;
+
+  border-radius:8px;
+  cursor:pointer;
+
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);
+  color:white;
+
+  font-weight:600;
+  font-size:13px;
+
+  transition:all 0.2s ease;
+
+}
+
+.pagination button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 5px 12px rgba(37,99,235,0.35);
+}
+
+.pagination button:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width:768px){
+
+  .history-card{
+    padding:15px;
+  }
+
+  .history-table{
+    font-size:13px;
+  }
+
+  /* table scroll for mobile */
+
+  .history-table-wrapper{
+    overflow-x:auto;
+  }
+
+}
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width:480px){
+
+  .history-page h2{
+    font-size:22px;
+  }
+
+  .pagination{
+    flex-direction:column;
+    gap:10px;
+  }
+
+}

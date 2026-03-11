@@ -7,14 +7,18 @@ const User = require("../models/User");
 // REGISTER
 router.post("/register", async (req, res, next) => {
   try {
+
     const { email, password } = req.body;
 
-    if (!email || !password)
+    if (!email || !password) {
       return res.status(400).json({ message: "All fields required" });
+    }
 
     const exist = await User.findOne({ email });
-    if (exist)
+
+    if (exist) {
       return res.status(400).json({ message: "User already exists" });
+    }
 
     const hash = await bcrypt.hash(password, 10);
 
@@ -23,7 +27,23 @@ router.post("/register", async (req, res, next) => {
       password: hash
     });
 
-    res.json({ message: "Registered successfully" });
+    // generate token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(201).json({
+      message: "Registered successfully",
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        plan: user.plan
+      }
+    });
+
   } catch (err) {
     next(err);
   }

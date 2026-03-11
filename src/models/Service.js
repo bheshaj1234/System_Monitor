@@ -38,6 +38,12 @@ const serviceSchema = new mongoose.Schema({
   lastCheckedAt: {
     type: Date,
     default: Date.now
+  },
+
+  slug: {
+    type: String,
+    unique: true,
+    required: true
   }
 
 }, { timestamps: true });

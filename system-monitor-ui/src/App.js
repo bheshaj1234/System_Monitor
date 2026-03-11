@@ -7,6 +7,8 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Metrics from "./pages/Metrics";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import History from "./pages/History";
+import PublicStatus from "./pages/PublicStatus";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/history/:id" element={<History />} />
+          <Route path="/status/:slug" element={<PublicStatus/>}/>
 
           <Route
             path="/dashboard"

@@ -18,6 +18,8 @@ const errorHandler = require("./middleware/errorHandler");
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./docs/swagger");
 
+const publicRoutes = require("./routes/publicRoutes");
+
 const monitorServices = require("./monitoring/monitoring");
 
 dotenv.config();
@@ -60,6 +62,7 @@ app.use("/auth", authRoutes);
 app.use("/service", serviceRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/metrics", metricsRoutes);
+app.use("/public",publicRoutes);
 
 //////////////////////////////////////////////////////////
 // 🔥 HEALTH CHECK (Important for Deployment)

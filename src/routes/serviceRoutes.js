@@ -7,39 +7,77 @@ const MonitorLog = require("../models/MonitorLog");
 const checkServiceOwnership = require("../middleware/checkServiceOwnership");
 const { redisClient } = require("../config/redis");
 const plans = require("../config/plans");
+const slugify = require("slugify");
 
 // ===============================
 // ADD SERVICE (Plan Based)
 // ===============================
+
 router.post("/add", auth, async (req, res) => {
   try {
+
     const { name, url, interval } = req.body;
 
-    if (!name || !url || !interval)
+    // Validate input
+    if (!name || !url || !interval) {
       return res.status(400).json({ msg: "All fields required" });
+    }
 
+    // Get user plan
     const user = await User.findById(req.user.id);
     const planConfig = plans[user.plan];
 
-    const count = await Service.countDocuments({ user: req.user.id, isActive: true });
+    // Count active services
+    const count = await Service.countDocuments({
+      user: req.user.id,
+      isActive: true
+    });
 
-    if (count >= planConfig.serviceLimit)
+    // Plan limit check
+    if (count >= planConfig.serviceLimit) {
       return res.status(403).json({
         msg: `Your ${user.plan} plan allows only ${planConfig.serviceLimit} services`
       });
+    }
+
+    ////////////////////////////////////////////////////
+    // SLUG GENERATION
+    ////////////////////////////////////////////////////
+
+    let slug = slugify(name, {
+      lower: true,
+      strict: true
+    });
+
+    // Check duplicate slug
+    const existingSlug = await Service.findOne({ slug });
+
+    if (existingSlug) {
+      slug = `${slug}-${Date.now()}`;
+    }
+
+    ////////////////////////////////////////////////////
+    // CREATE SERVICE
+    ////////////////////////////////////////////////////
 
     const service = await Service.create({
       name,
       url,
       interval,
+      slug,
       user: req.user.id
     });
+
+    ////////////////////////////////////////////////////
+    // CLEAR DASHBOARD CACHE
+    ////////////////////////////////////////////////////
 
     await redisClient.del(`dashboard:${req.user.id}`);
 
     res.json(service);
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ msg: err.message });
   }
 });

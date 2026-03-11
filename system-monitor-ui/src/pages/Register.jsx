@@ -1,85 +1,131 @@
 import { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import "./Login.css"; // Same styling use kar sakte ho
+import api from "../api/axios";
+import "./Login.css";
 
 export default function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const register = async () => {
-    if (!name || !email || !password) {
-      return setError("Please fill all fields");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword,setConfirmPassword] = useState("");
+
+  const [loading,setLoading] = useState(false);
+  const [error,setError] = useState("");
+
+  const handleRegister = async (e)=>{
+
+    e.preventDefault();
+
+    if(password !== confirmPassword){
+      return setError("Passwords do not match");
     }
 
-    try {
+    try{
+
       setLoading(true);
       setError("");
 
-      const res = await api.post("/auth/register", {
-        name,
+      const res = await api.post("/auth/register",{
         email,
-        password,
+        password
       });
 
-      // Token + User save via context
-      login(res.data.token, res.data.user);
+      // auto login after signup
+      login(res.data.token);
 
       navigate("/dashboard");
-    } catch (err) {
-      setError(
-        err.response?.data?.message || "Registration failed. Try again."
-      );
-    } finally {
+
+    }catch(err){
+
+      setError(err.response?.data?.message || "Registration failed");
+
+    }finally{
       setLoading(false);
     }
+
   };
 
-  return (
+  return(
+
     <div className="login-container">
+
       <div className="login-card">
+
+        <div className="logo">⚡</div>
+
         <h2>Create Account</h2>
-        <p className="subtitle">Start monitoring your services</p>
+
+        <p className="subtitle">
+          Start monitoring your services
+        </p>
 
         {error && <div className="error">{error}</div>}
 
-        <input
-          type="text"
-          placeholder="Full Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        <form onSubmit={handleRegister}>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <div className="input-group">
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+            <label>Email</label>
 
-        <button onClick={register} disabled={loading}>
-          {loading ? "Creating Account..." : "Register"}
-        </button>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e)=>setEmail(e.target.value)}
+              required
+            />
 
-        <p className="switch-auth">
-          Already have an account?{" "}
-          <Link to="/login">Login here</Link>
+          </div>
+
+          <div className="input-group">
+
+            <label>Password</label>
+
+            <input
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
+              required
+            />
+
+          </div>
+
+          <div className="input-group">
+
+            <label>Confirm Password</label>
+
+            <input
+              type="password"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={(e)=>setConfirmPassword(e.target.value)}
+              required
+            />
+
+          </div>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Creating account..." : "Sign Up"}
+          </button>
+
+        </form>
+
+        <p
+          style={{marginTop:"15px",cursor:"pointer"}}
+          onClick={()=>navigate("/login")}
+        >
+          Already have an account? Login
         </p>
+
       </div>
+
     </div>
+
   );
+
 }
