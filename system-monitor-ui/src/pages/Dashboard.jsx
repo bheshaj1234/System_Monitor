@@ -6,8 +6,10 @@ import AddServiceModal from "../components/AddServiceModal";
 import "./Dashboard.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import PlanInfo from "../components/PlanInfo";
 
 export default function Dashboard() {
+
   const [services, setServices] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -16,29 +18,52 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { logout, user } = useContext(AuthContext);
 
-  // 🔹 Fetch Services
+  ////////////////////////////////////////////////////////
+  // FETCH SERVICES
+  ////////////////////////////////////////////////////////
+
   const fetchServices = useCallback(async () => {
+
     try {
+
       setLoading(true);
+
       const res = await api.get("/service/my");
+
       setServices(res.data);
+
     } catch (err) {
+
       console.error(err);
+
       setError("Session expired. Please login again.");
+
       logout();
+
       navigate("/login");
+
     } finally {
+
       setLoading(false);
+
     }
+
   }, [logout, navigate]);
 
   useEffect(() => {
+
     fetchServices();
+
   }, [fetchServices]);
 
-  // 🔥 Live Socket Updates (Optimized)
+  ////////////////////////////////////////////////////////
+  // REALTIME SOCKET UPDATES
+  ////////////////////////////////////////////////////////
+
   useEffect(() => {
+
     const handleServiceUpdate = (data) => {
+
       console.log("Realtime update:", data);
 
       setServices((prev) =>
@@ -54,46 +79,93 @@ export default function Dashboard() {
             : s
         )
       );
+
     };
 
     socket.on("serviceStatusUpdate", handleServiceUpdate);
 
     return () => {
+
       socket.off("serviceStatusUpdate", handleServiceUpdate);
+
     };
+
   }, []);
 
-  // 🔹 Delete handler
+  ////////////////////////////////////////////////////////
+  // DELETE SERVICE
+  ////////////////////////////////////////////////////////
+
   const handleDelete = async (id) => {
+
     try {
+
       await api.delete(`/service/delete/${id}`);
+
       setServices((prev) => prev.filter((s) => s._id !== id));
+
     } catch (err) {
+
       alert("Delete failed");
+
     }
+
   };
 
+  ////////////////////////////////////////////////////////
+  // ADD SERVICE BUTTON CLICK
+  ////////////////////////////////////////////////////////
+
+  const handleAddServiceClick = () => {
+
+    setShowModal(true);
+
+  };
+
+  ////////////////////////////////////////////////////////
+  // RENDER
+  ////////////////////////////////////////////////////////
+
   return (
+
     <div className="dashboard-container">
+
       <div className="dashboard-card">
 
-        {/* Header */}
+        {/* HEADER */}
+
         <div className="dashboard-header">
+
           <div>
+
             <h2>Live System Dashboard</h2>
+
             {user && (
+
               <p className="user-email">
+
                 Logged in as: <strong>{user.email}</strong>
+
               </p>
+
             )}
+
           </div>
 
           <div className="header-actions">
+
             <button
               className="add-btn"
-              onClick={() => setShowModal(true)}
+              onClick={handleAddServiceClick}
             >
               + Add Service
+            </button>
+
+            <button
+              className="upgrade-btn"
+              onClick={() => navigate("/upgrade")}
+            >
+              Upgrade to PRO
             </button>
 
             <button
@@ -105,34 +177,61 @@ export default function Dashboard() {
             >
               Logout
             </button>
+
           </div>
+
         </div>
+
+        {/* PLAN INFO */}
+
+        <PlanInfo />
 
         {error && <div className="error">{error}</div>}
 
+        {/* SERVICES LIST */}
+
         {loading ? (
+
           <p className="loading-text">Loading services...</p>
+
         ) : services.length === 0 ? (
+
           <p className="empty-text">No services added yet.</p>
+
         ) : (
+
           <div className="services-grid">
+
             {services.map((s) => (
+
               <ServiceCard
                 key={s._id}
                 service={s}
                 onDelete={handleDelete}
               />
+
             ))}
+
           </div>
+
         )}
 
+        {/* ADD SERVICE MODAL */}
+
         {showModal && (
+
           <AddServiceModal
             close={() => setShowModal(false)}
             refreshServices={fetchServices}
           />
+
         )}
+
       </div>
+
     </div>
+
   );
+
 }
+  

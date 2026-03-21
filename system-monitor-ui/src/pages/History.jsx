@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import HistoryTable from "../components/HistoryTable";
 import "./History.css";
+import UptimeGraph from "../components/UptimeGraph";
 
 export default function History() {
 
@@ -53,6 +54,8 @@ export default function History() {
     <div className="history-page">
 
       <h2>Service History</h2>
+
+      <UptimeGraph serviceId={id} />
 
       <div className="history-card">
 

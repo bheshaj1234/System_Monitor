@@ -3,33 +3,42 @@ import api from "../api/axios";
 import "./AddServiceModal.css";
 
 export default function AddServiceModal({ close, refreshServices }) {
+
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
-  const [interval, setInterval] = useState(5);
+  const [interval, setInterval] = useState(10);
   const [error, setError] = useState("");
 
   const handleAdd = async () => {
-    if (!name || !url) {
+
+    if (!name || !url || !interval) {
       return setError("All fields are required");
     }
 
     try {
+
       await api.post("/service/add", {
         name,
         url,
-        interval,
+        interval
       });
 
       refreshServices();
       close();
+
     } catch (err) {
-      setError("Failed to add service");
+
+      setError(err.response?.data?.message || "Failed to add service");
+
     }
+
   };
 
   return (
+
     <div className="modal-overlay">
       <div className="modal">
+
         <h3>Add New Service</h3>
 
         {error && <p className="error">{error}</p>}
@@ -48,18 +57,30 @@ export default function AddServiceModal({ close, refreshServices }) {
 
         <input
           type="number"
-          placeholder="Interval (minutes)"
+          min="10"
+          placeholder="Interval (seconds)"
           value={interval}
-          onChange={(e) => setInterval(e.target.value)}
+          onChange={(e) => setInterval(Number(e.target.value))}
         />
 
         <div className="modal-actions">
-          <button onClick={handleAdd}>Add</button>
-          <button onClick={close} className="cancel-btn">
+
+          <button onClick={handleAdd}>
+            Add
+          </button>
+
+          <button
+            onClick={close}
+            className="cancel-btn"
+          >
             Cancel
           </button>
+
         </div>
+
       </div>
     </div>
+
   );
+
 }

@@ -33,7 +33,7 @@ export default function Login() {
 
     } catch (err) {
 
-      setError(err.response?.data?.msg || "Invalid email or password");
+      setError(err.response?.data?.message|| "Invalid email or password");
 
     } finally {
       setLoading(false);
@@ -95,6 +95,18 @@ export default function Login() {
           </button>
 
         </form>
+
+        <p
+          onClick={()=>navigate("/forgot-password")}
+          style={{
+            marginTop:"15px",
+            textAlign:"center",
+            cursor:"pointer",
+            color:"#38bdf8"
+          }}
+        >
+          Forgot password?
+        </p>
 
       </div>
 

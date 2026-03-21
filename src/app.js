@@ -22,6 +22,10 @@ const publicRoutes = require("./routes/publicRoutes");
 
 const monitorServices = require("./monitoring/monitoring");
 
+const planRoutes = require("./routes/planRoutes");
+
+const logRoutes = require("./routes/logRoutes");
+
 dotenv.config();
 
 const app = express();
@@ -60,10 +64,12 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.use("/auth", authRoutes);
 app.use("/service", serviceRoutes);
+app.use("/api/plans", planRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/metrics", metricsRoutes);
 app.use("/public",publicRoutes);
-
+app.use("/plans", planRoutes);
+app.use("/logs", logRoutes);
 //////////////////////////////////////////////////////////
 // 🔥 HEALTH CHECK (Important for Deployment)
 //////////////////////////////////////////////////////////

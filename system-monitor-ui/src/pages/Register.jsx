@@ -1,13 +1,11 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
 import api from "../api/axios";
 import "./Login.css";
 
 export default function Register() {
 
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +13,7 @@ export default function Register() {
 
   const [loading,setLoading] = useState(false);
   const [error,setError] = useState("");
+  const [success,setSuccess] = useState("");
 
   const handleRegister = async (e)=>{
 
@@ -28,20 +27,26 @@ export default function Register() {
 
       setLoading(true);
       setError("");
+      setSuccess("");
 
       const res = await api.post("/auth/register",{
         email,
         password
       });
 
-      // auto login after signup
-      login(res.data.token);
+      setSuccess(
+        "Account created successfully. Please verify your email before logging in."
+      );
 
-      navigate("/dashboard");
+      setTimeout(()=>{
+        navigate("/verify-email");
+      },3000);
 
     }catch(err){
 
-      setError(err.response?.data?.message || "Registration failed");
+      setError(
+        err.response?.data?.message || "Registration failed"
+      );
 
     }finally{
       setLoading(false);
@@ -64,6 +69,7 @@ export default function Register() {
         </p>
 
         {error && <div className="error">{error}</div>}
+        {success && <div className="success">{success}</div>}
 
         <form onSubmit={handleRegister}>
 
