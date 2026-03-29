@@ -128,6 +128,10 @@ router.delete("/delete/:id", auth, checkServiceOwnership, async (req, res) => {
 // ===============================
 // MANUAL CHECK SERVICE (SOCKET ENABLED)
 // ===============================
+const axios = require("axios");
+const MonitorLog = require("../models/MonitorLog");
+const socket = require("../socket");
+
 router.post("/:id/check", auth, checkServiceOwnership, async (req, res) => {
   try {
     const service = await Service.findById(req.params.id);
@@ -136,31 +140,57 @@ router.post("/:id/check", auth, checkServiceOwnership, async (req, res) => {
       return res.status(404).json({ msg: "Service not found" });
     }
 
-    // 👉 Real monitoring logic yaha laga sakte ho
-    service.lastStatus = "UP";   // Capital me rakho (uptime logic ke liye)
-    service.lastCheckedAt = new Date();
+    const startTime = Date.now();
+    let status = "DOWN";
+    let responseTime = null;
 
+    try {
+      const response = await axios.get(service.url, { timeout: 8000 });
+      responseTime = Date.now() - startTime;
+      if (response.status >= 200 && response.status < 400) {
+        status = "UP";
+      }
+    } catch (pingErr) {
+      responseTime = Date.now() - startTime;
+      status = "DOWN";
+    }
+
+    // Save a real MonitorLog entry
+    await MonitorLog.create({
+      service: service._id,
+      status,
+      responseTime,
+    });
+
+    // Update the service document
+    service.lastStatus = status.toLowerCase();
+    service.lastCheckedAt = new Date();
     await service.save();
 
-    // 🔥 SOCKET EMIT ADD KIYA
-    const io = req.app.get("io");
-
-    if (io) {
+    // Emit real-time update via socket
+    try {
+      const io = socket.getIO();
       io.emit("serviceStatusUpdate", {
         serviceId: service._id,
-        status: service.lastStatus,
-        checkedAt: service.lastCheckedAt
+        name: service.name,
+        status,
+        responseTime,
+        lastCheckedAt: service.lastCheckedAt,
       });
+    } catch (_) {
+      // socket not critical - ignore if not initialized
     }
 
     res.json({
       msg: "Service checked successfully",
+      status,
+      responseTime,
       service,
     });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ msg: "Manual check failed" });
+    res.status(500).json({ msg: "Manual check failed", error: err.message });
   }
 });
 
