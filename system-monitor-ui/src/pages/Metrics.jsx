@@ -13,6 +13,11 @@ export default function Metrics() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => setMounted(true));
+  }, []);
 
   useEffect(() => {
     api.get("/metrics")
@@ -42,39 +47,80 @@ export default function Metrics() {
   }, []);
 
   return (
-    <div className="metrics-container">
-      <div className="metrics-card">
-        <h2>System Metrics Overview</h2>
+    <div className="metrics-page">
+      {/* Animated Background Elements */}
+      <div className="bg-shape shape-1"></div>
+      <div className="bg-shape shape-3"></div>
 
-        {loading && <p className="info-text">Loading metrics...</p>}
-        {error && <div className="error">{error}</div>}
+      <div className={`metrics-container ${mounted ? 'visible' : ''}`}>
+        <div className="metrics-header-area">
+          <h2><span className="logo-icon">📊</span> Analytics & Metrics</h2>
+        </div>
+
+        {loading && (
+          <div className="loading-state">
+            <div className="loader"></div>
+            <p>Aggregating Telemetry...</p>
+          </div>
+        )}
+        
+        {error && <div className="error-banner">{error}</div>}
 
         {!loading && !error && (
           <>
             {/* Summary */}
             <div className="stats-grid">
-              <StatBox title="Total Services" value={summary.totalServices} />
-              <StatBox title="UP" value={summary.up} />
-              <StatBox title="DOWN" value={summary.down} />
+              <StatBox title="Total Trackers" value={summary.totalServices} />
+              <StatBox title="Healthy" value={summary.up} color="#4ade80" />
+              <StatBox title="Down" value={summary.down} color="#f87171" />
             </div>
 
-            {/* Detailed List */}
-            <div className="service-list">
-              {services.map(service => (
-                <div className="service-card" key={service.serviceId}>
-                  <h3>{service.serviceName}</h3>
-                  <p>Status: 
-                    <span className={
-                      service.currentStatus === "UP" ? "up" : "down"
-                    }>
-                      {service.currentStatus}
-                    </span>
-                  </p>
-                  <p>Total Checks: {service.totalChecks}</p>
-                  <p>Uptime: {service.uptimePercent}%</p>
-                  <p>Avg Response: {service.averageResponseTime} ms</p>
+            <div className="metrics-card">
+              <h3 className="section-title">Individual Node performance</h3>
+              
+              {services.length === 0 ? (
+                <div className="empty-state">
+                  <p>No nodes found to analyze.</p>
                 </div>
-              ))}
+              ) : (
+                <div className="service-list">
+                  {services.map((service, index) => {
+                    const isUp = service.currentStatus === "UP";
+                    return (
+                      <div 
+                        className="service-metric-card animate-stagger" 
+                        key={service.serviceId}
+                        style={{animationDelay: `${index * 0.05}s`}}
+                      >
+                        <div className="metric-header">
+                          <h3 className="truncate" title={service.serviceName}>{service.serviceName}</h3>
+                          <div className={`status-pill ${isUp ? 'status-up' : 'status-down'}`}>
+                            <span className="status-dot"></span>
+                            {service.currentStatus}
+                          </div>
+                        </div>
+                        
+                        <div className="metric-body">
+                          <div className="metric-stat">
+                            <span className="stat-label">Total Validations</span>
+                            <span className="stat-val">{service.totalChecks}</span>
+                          </div>
+                          <div className="metric-stat">
+                            <span className="stat-label">Avg Latency</span>
+                            <span className="stat-val user-accent">{service.averageResponseTime} ms</span>
+                          </div>
+                          <div className="metric-stat">
+                            <span className="stat-label">System Uptime</span>
+                            <span className={`stat-val ${service.uptimePercent > 99 ? 'up-text' : service.uptimePercent < 90 ? 'down-text' : ''}`}>
+                              {service.uptimePercent}%
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </>
         )}

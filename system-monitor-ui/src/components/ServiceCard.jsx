@@ -3,16 +3,16 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "./ServiceCard.css";
 
-export default function ServiceCard({ service, onDelete }) {
-
+export default function ServiceCard({ service, onDelete, index }) {
   const [checking, setChecking] = useState(false);
   const navigate = useNavigate();
 
   const isUp = service.lastStatus?.toLowerCase() === "up";
+  const statusClass = isUp ? "up" : service.lastStatus ? "down" : "unknown";
 
   // DELETE SERVICE
   const handleDelete = () => {
-    if (!window.confirm("Are you sure you want to delete this service?")) return;
+    if (!window.confirm("Are you sure you want to delete this tracker?")) return;
     onDelete(service._id);
   };
 
@@ -34,79 +34,81 @@ export default function ServiceCard({ service, onDelete }) {
   };
 
   return (
-    <div className={`service-card ${isUp ? "up" : "down"}`}>
+    <div 
+      className={`service-card animate-stagger`} 
+      style={{animationDelay: `${index * 0.05}s`}}
+    >
+      {/* Dynamic Glow Border Effect */}
+      <div className={`service-glow-edge status-${statusClass}`}></div>
 
       {/* HEADER */}
       <div className="service-header">
-        <h3>{service.name}</h3>
-
-        <span className={`status-badge ${isUp ? "up" : "down"}`}>
-          {service.lastStatus || "UNKNOWN"}
-        </span>
+        <h3 className="truncate" title={service.name}>{service.name}</h3>
+        <div className={`status-pill status-${statusClass}`}>
+          <span className="status-dot"></span>
+          {service.lastStatus ? service.lastStatus.toUpperCase() : "PENDING"}
+        </div>
       </div>
 
       {/* SERVICE INFO */}
       <div className="service-info">
-
-        <p>
-          <strong>URL:</strong>{" "}
-          <a href={service.url} target="_blank" rel="noopener noreferrer">
+        <div className="info-row">
+          <span className="info-label">Endpoint</span>
+          <a href={service.url} target="_blank" rel="noopener noreferrer" className="info-val truncate-link" title={service.url}>
             {service.url}
           </a>
-        </p>
+        </div>
 
-        <p>
-          <strong>Last Checked:</strong>{" "}
-          {service.lastCheckedAt
-            ? new Date(service.lastCheckedAt).toLocaleString()
-            : "N/A"}
-        </p>
+        <div className="info-row">
+          <span className="info-label">Last Polled</span>
+          <span className="info-val">
+            {service.lastCheckedAt
+              ? new Date(service.lastCheckedAt).toLocaleString()
+              : "Awaiting Initial Check"}
+          </span>
+        </div>
 
-        {/* PUBLIC STATUS PAGE */}
-        <p>
-          <strong>Public Status:</strong>{" "}
+        <div className="info-row status-row">
+          <span className="info-label">Public Node</span>
           {service.slug ? (
             <a
               href={`/status/${service.slug}`}
               target="_blank"
               rel="noopener noreferrer"
+              className="public-link"
             >
-              View Status Page
+              SystemStatus ↗
             </a>
           ) : (
-            <span style={{ color: "#888" }}>Not Available</span>
+            <span className="info-val empty">Restricted</span>
           )}
-        </p>
-
+        </div>
       </div>
 
       {/* ACTION BUTTONS */}
       <div className="service-actions">
-
         <button
-          className="check-btn"
+          className="card-btn action-check"
           onClick={handleCheckNow}
           disabled={checking}
         >
-          {checking ? "Checking..." : "Check Now"}
+          {checking ? "Polling..." : "Force Check"}
         </button>
 
         <button
-          className="history-btn"
+          className="card-btn action-history"
           onClick={handleViewHistory}
         >
-          View History
+          Telemetry
         </button>
 
         <button
-          className="delete-btn"
+          className="card-btn action-delete"
           onClick={handleDelete}
         >
           Delete
         </button>
-
       </div>
-
     </div>
   );
 }

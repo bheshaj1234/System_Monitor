@@ -1,41 +1,44 @@
-    export default function HistoryTable({ logs }){
-
-    return(
-
+export default function HistoryTable({ logs }) {
+  return (
     <table className="history-table">
-
-    <thead>
+      <thead>
         <tr>
-        <th>Status</th>
-        <th>Response Time</th>
-        <th>Checked At</th>
+          <th>System Status</th>
+          <th>Response Time</th>
+          <th>Timestamp (Local)</th>
         </tr>
-    </thead>
+      </thead>
 
-    <tbody>
+      <tbody>
+        {logs.map((log) => {
+          const isUp = log.status?.toUpperCase() === "UP";
+          
+          return (
+            <tr key={log._id}>
+              <td>
+                <span className={`status-pill ${isUp ? "status-up" : "status-down"}`}>
+                  <span className="status-dot"></span>
+                  {log.status?.toUpperCase() || "UNKNOWN"}
+                </span>
+              </td>
 
-        {logs.map(log => (
+              <td>
+                {log.responseTime ? (
+                  <span style={{color: log.responseTime > 1000 ? '#fca5a5' : '#cbd5e1'}}>
+                    {log.responseTime} ms
+                  </span>
+                ) : (
+                  <span style={{color: '#64748b'}}>-</span>
+                )}
+              </td>
 
-        <tr key={log._id}>
-
-        <td className={log.status==="UP" ? "up" : "down"}>
-        {log.status}
-        </td>
-
-        <td>{log.responseTime} ms</td>
-
-        <td>
-        {new Date(log.checkedAt).toLocaleString()}
-        </td>
-
-        </tr>
-
-        ))}
-
-    </tbody>
-
+              <td>
+                {new Date(log.checkedAt).toLocaleString()}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
     </table>
-
-    );
-
-    }
+  );
+}

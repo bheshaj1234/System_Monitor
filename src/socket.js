@@ -3,7 +3,10 @@ let io;
 module.exports = {
   init: (server) => {
     io = require("socket.io")(server, {
-      cors: { origin: "*" }
+      cors: { 
+        origin: process.env.FRONTEND_URL || "http://localhost:3000",
+        credentials: true
+      }
     });
 
     io.on("connection", (socket) => {

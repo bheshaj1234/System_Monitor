@@ -1,167 +1,194 @@
 /* ================= PAGE BACKGROUND ================= */
+.history-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: radial-gradient(circle at center, #0a0a0f 0%, #000000 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  position: relative;
+  overflow-x: clip;
+  z-index: 1;
+}
 
-.history-page{
-  min-height:100vh;
-  padding:40px 20px;
+.history-container {
+  width: 100%;
+  max-width: 1000px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-  background: linear-gradient(135deg,#0f172a,#020617);
+.history-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+.history-header-actions {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 1000px;
+}
 
-  color:white;
+.btn-back {
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.btn-back:hover {
+  color: #38bdf8;
 }
 
 /* ================= TITLE ================= */
-
-.history-page h2{
-  margin-bottom:25px;
-  font-size:26px;
-  color:#38bdf8;
-  letter-spacing:0.5px;
+.history-page h2 {
+  margin-bottom: 30px;
+  font-size: 28px;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  width: 100%;
+  max-width: 1000px;
+  text-align: left;
 }
 
 /* ================= CARD ================= */
-
-.history-card{
-  width:100%;
-  max-width:1000px;
-
-  background:rgba(2,6,23,0.9);
-  backdrop-filter: blur(10px);
-
-  border-radius:16px;
-  padding:25px;
-
-  border:1px solid rgba(56,189,248,0.15);
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.5),
-    0 0 20px rgba(56,189,248,0.08);
+.history-card {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
-/* ================= TABLE ================= */
-
-.history-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:14px;
+/* ================= GRAPH & TABLE ================= */
+.history-graph-wrapper {
+  margin-bottom: 30px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 20px 20px 20px 0;
+  height: 300px;
 }
 
-.history-table thead{
-  background:#020617;
+.history-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.history-table th{
-  padding:14px;
-  color:#94a3b8;
-  font-weight:600;
-  border-bottom:1px solid rgba(255,255,255,0.05);
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
-.history-table td{
-  padding:14px;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-  text-align:center;
+.history-table thead {
+  background: rgba(15, 23, 42, 0.6);
 }
 
-/* Hover row */
+.history-table th {
+  padding: 16px;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+}
 
-.history-table tbody tr:hover{
-  background:rgba(56,189,248,0.05);
+.history-table td {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: left;
+  color: #e2e8f0;
+}
+
+.history-table tbody tr {
+  transition: background 0.2s;
+}
+
+.history-table tbody tr:hover {
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.history-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* ================= STATUS ================= */
-
-.up{
-  color:#22c55e;
-  font-weight:600;
+.history-table .up {
+  color: #4ade80;
+  font-weight: 600;
 }
 
-.down{
-  color:#ef4444;
-  font-weight:600;
+.history-table .down {
+  color: #f87171;
+  font-weight: 600;
 }
 
 /* ================= PAGINATION ================= */
-
-.pagination{
-  margin-top:25px;
-  display:flex;
-  gap:15px;
-  align-items:center;
-  justify-content:center;
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 20px;
 }
 
-.pagination span{
-  color:#cbd5e1;
-  font-size:14px;
+.page-indicator {
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-/* Pagination buttons */
-
-.pagination button{
-
-  padding:8px 16px;
-  border:none;
-
-  border-radius:8px;
-  cursor:pointer;
-
-  background:linear-gradient(135deg,#2563eb,#1d4ed8);
-  color:white;
-
-  font-weight:600;
-  font-size:13px;
-
-  transition:all 0.2s ease;
-
+.btn-page {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.6);
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
-.pagination button:hover{
-  transform:translateY(-2px);
-  box-shadow:0 5px 12px rgba(37,99,235,0.35);
+.btn-page:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
 }
 
-.pagination button:disabled{
-  opacity:0.4;
-  cursor:not-allowed;
-  transform:none;
-  box-shadow:none;
+.btn-page:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 /* ================= MOBILE ================= */
-
-@media (max-width:768px){
-
-  .history-card{
-    padding:15px;
+@media (max-width: 768px) {
+  .history-card {
+    padding: 20px;
   }
 
-  .history-table{
-    font-size:13px;
+  .history-page h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
   }
-
-  /* table scroll for mobile */
-
-  .history-table-wrapper{
-    overflow-x:auto;
-  }
-
-}
-
-/* ================= SMALL MOBILE ================= */
-
-@media (max-width:480px){
-
-  .history-page h2{
-    font-size:22px;
-  }
-
-  .pagination{
-    flex-direction:column;
-    gap:10px;
-  }
-
 }

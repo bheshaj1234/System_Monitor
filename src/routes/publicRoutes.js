@@ -23,6 +23,7 @@ router.get("/status/:slug", async (req,res)=>{
 
  res.json({
   name:service.name,
+  url:service.url,
   status:service.lastStatus,
   lastChecked:service.lastCheckedAt,
   uptime:uptime+"%",

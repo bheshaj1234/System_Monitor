@@ -1,12 +1,13 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
 import api from "../api/axios";
 import HistoryTable from "../components/HistoryTable";
+import HistoryGraph from "../components/HistoryGraph";
 import "./History.css";
 
 export default function History() {
-
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [logs, setLogs] = useState([]);
   const [page, setPage] = useState(1);
@@ -14,11 +15,14 @@ export default function History() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
 
-  const fetchHistory = async () => {
+  useEffect(() => {
+    requestAnimationFrame(() => setMounted(true));
+  }, []);
 
+  const fetchHistory = useCallback(async () => {
     try {
-
       setLoading(true);
       setError("");
 
@@ -30,77 +34,83 @@ export default function History() {
       setTotalPages(res.data.totalPages);
 
     } catch (err) {
-
       console.log(err);
-      setError("Failed to load service history.");
-
+      setError("Failed to load service telemetry history.");
     } finally {
-
       setLoading(false);
-
     }
-
-  };
+  }, [id, page]);
 
   useEffect(() => {
-
     fetchHistory();
-
-  }, [page]);
+  }, [fetchHistory]);
 
   return (
-
     <div className="history-page">
+      {/* Animated Background Elements */}
+      <div className="bg-shape shape-1"></div>
+      <div className="bg-shape shape-2"></div>
 
-      <h2>Service History</h2>
-
-      <div className="history-card">
-
-        {error && <p className="error-text">{error}</p>}
-
-        {loading ? (
-
-          <p className="loading-text">Loading history...</p>
-
-        ) : logs.length === 0 ? (
-
-          <p className="empty-text">No logs available.</p>
-
-        ) : (
-
-          <div className="history-table-wrapper">
-            <HistoryTable logs={logs} />
-          </div>
-
-        )}
-
-        {/* Pagination */}
-
-        <div className="pagination">
-
-          <button
-            disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            Prev
+      <div className={`history-container ${mounted ? 'visible' : ''}`}>
+        <div className="history-header-actions">
+          <button className="btn-back" onClick={() => navigate("/dashboard")}>
+            ← Back to Dashboard
           </button>
-
-          <span>
-            Page {page} / {totalPages}
-          </span>
-
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-          </button>
-
         </div>
 
+        <h2>Telemetry History</h2>
+
+        <div className="history-card">
+          {error && <div className="error-banner">{error}</div>}
+
+          {loading ? (
+            <div className="loading-state">
+              <div className="loader"></div>
+              <p>Fetching Logs...</p>
+            </div>
+          ) : logs.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">📭</div>
+              <h3>No Logs Available</h3>
+              <p>This tracker has not recorded any recent telemetry data.</p>
+            </div>
+          ) : (
+            <>
+              <div className="history-graph-wrapper animate-stagger">
+                <HistoryGraph logs={logs} />
+              </div>
+              <div className="history-table-wrapper animate-stagger" style={{ animationDelay: '0.1s' }}>
+                <HistoryTable logs={logs} />
+              </div>
+            </>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="btn-page"
+              >
+                Previous
+              </button>
+
+              <span className="page-indicator">
+                Page {page} of {totalPages}
+              </span>
+
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="btn-page"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-
     </div>
-
   );
 }

@@ -1,14 +1,28 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Landing.css";
 
 export default function Landing() {
-
   const navigate = useNavigate();
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdown, setDropdown] = useState(null);
   const [openFaq, setOpenFaq] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => setMounted(true));
+    
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleDropdown = (menu) => {
     setDropdown(dropdown === menu ? null : menu);
@@ -19,20 +33,20 @@ export default function Landing() {
   };
 
   return (
-    <div className="landing">
+    <div className={`landing ${mounted ? 'visible' : ''}`}>
+      
+      {/* Animated Background Elements */}
+      <div className="bg-shape shape-1"></div>
+      <div className="bg-shape shape-2"></div>
 
       {/* NAVBAR */}
-
-      <nav className="navbar">
-
-        <div className="logo">
-          <span className="dot"></span>
-          SystemMonitor
+      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+        <div className="logo cursor-pointer" onClick={() => navigate("/")}>
+          <span className="logo-icon">⚡</span>
+          <span>System<span className="font-bold text-accent">Monitor</span></span>
         </div>
 
         <div className={`nav-links ${menuOpen ? "open" : ""}`}>
-
-          {/* FEATURES */}
           <div
             className="nav-item"
             onMouseEnter={() => setDropdown("features")}
@@ -40,17 +54,14 @@ export default function Landing() {
             onClick={() => toggleDropdown("features")}
           >
             Features
-            {dropdown === "features" && (
-              <div className="dropdown">
-                <p>Website Monitoring</p>
-                <p>API Monitoring</p>
-                <p>Ping Monitoring</p>
-                <p>Status Pages</p>
-              </div>
-            )}
+            <div className={`dropdown ${dropdown === "features" ? "open" : ""}`}>
+              <p>Website Monitoring</p>
+              <p>API Monitoring</p>
+              <p>Ping Monitoring</p>
+              <p>Status Pages</p>
+            </div>
           </div>
 
-          {/* SOLUTIONS */}
           <div
             className="nav-item"
             onMouseEnter={() => setDropdown("solutions")}
@@ -58,34 +69,14 @@ export default function Landing() {
             onClick={() => toggleDropdown("solutions")}
           >
             Solutions
-            {dropdown === "solutions" && (
-              <div className="dropdown">
-                <p>Developers</p>
-                <p>Startups</p>
-                <p>DevOps Teams</p>
-                <p>Enterprise Teams</p>
-              </div>
-            )}
+            <div className={`dropdown ${dropdown === "solutions" ? "open" : ""}`}>
+              <p>Developers</p>
+              <p>Startups</p>
+              <p>DevOps Teams</p>
+              <p>Enterprise</p>
+            </div>
           </div>
 
-          {/* ENTERPRISE */}
-          <div
-            className="nav-item"
-            onMouseEnter={() => setDropdown("enterprise")}
-            onMouseLeave={() => setDropdown(null)}
-            onClick={() => toggleDropdown("enterprise")}
-          >
-            Enterprise
-            {dropdown === "enterprise" && (
-              <div className="dropdown">
-                <p>Advanced Monitoring</p>
-                <p>Custom Integrations</p>
-                <p>Dedicated Support</p>
-              </div>
-            )}
-          </div>
-
-          {/* PRICING */}
           <div
             className="nav-item"
             onMouseEnter={() => setDropdown("pricing")}
@@ -93,221 +84,171 @@ export default function Landing() {
             onClick={() => toggleDropdown("pricing")}
           >
             Pricing
-            {dropdown === "pricing" && (
-              <div className="dropdown">
-                <p>Free Plan</p>
-                <p>Pro Plan</p>
-                <p>Enterprise Plan</p>
-              </div>
-            )}
+            <div className={`dropdown ${dropdown === "pricing" ? "open" : ""}`}>
+              <p>Free Tier</p>
+              <p>Pro Plan</p>
+              <p>Enterprise Plan</p>
+            </div>
           </div>
 
+          {!menuOpen && (
+            <div className="nav-buttons mobile-hide">
+              <button className="btn-outline" onClick={() => navigate("/login")}>
+                Login
+              </button>
+              <button className="btn-primary" onClick={() => navigate("/register")}>
+                Get Started
+              </button>
+            </div>
+          )}
+          <div className="nav-buttons desktop-hide" style={{display: menuOpen ? "flex" : "none", flexDirection: "row", gap: "15px", marginTop: "20px", width: "100%", justifyContent: "center"}}>
+              <button className="btn-outline" style={{width: "25%", minWidth: "100px"}} onClick={() => navigate("/login")}>
+                Login
+              </button>
+              <button className="btn-primary" style={{width: "25%", minWidth: "100px"}} onClick={() => navigate("/register")}>
+                Signup
+              </button>
+          </div>
         </div>
 
-        <div className="nav-buttons">
-
-          <button
-            className="login"
-            onClick={() => navigate("/login")}
-          >
-            Log in
-          </button>
-
-          <button
-            className="start"
-            onClick={() => navigate("/register")}
-          >
-            Get Started
-          </button>
-
+        <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? '✕' : '☰'}
         </div>
-
-        <div
-          className="hamburger"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          ☰
-        </div>
-
       </nav>
 
       {/* HERO */}
-
       <section className="hero">
-
-        <div className="badge">
-          🚀 Trusted by developers worldwide
+        <div className="badge animate-slide-up">
+          <span className="pulse-dot"></span> Protected by Industry Leading Uptime
         </div>
 
-        <h1>
-          Monitor your websites <br />
-          <span>before users notice downtime</span>
+        <h1 className="animate-slide-up delay-1">
+          Monitor your architecture <br />
+          <span className="gradient-text">before users notice downtime</span>
         </h1>
 
-        <p className="hero-text">
-          SystemMonitor continuously checks your websites, APIs and servers
-          so you always know when something goes wrong.
+        <p className="hero-text animate-slide-up delay-2">
+          SystemMonitor continuously checks your APIs, websites, and servers from around the globe so your team always knows when something goes offline.
         </p>
 
-        <div className="features-row">
-          <p>✔ 24/7 Monitoring</p>
-          <p>✔ Real-time Alerts</p>
-          <p>✔ Performance Metrics</p>
-          <p>✔ Public Status Pages</p>
+        <div className="features-row animate-slide-up delay-3">
+          <p><span className="check">✔</span> 24/7 Monitoring</p>
+          <p><span className="check">✔</span> Real-time Alerts</p>
+          <p><span className="check">✔</span> Deep Analytics</p>
+          <p><span className="check">✔</span> Public Status</p>
         </div>
 
-        <button
-          className="cta"
-          onClick={() => navigate("/login")}
-        >
-          Start monitoring in 30 seconds
-        </button>
-
+        <div className="hero-actions animate-slide-up delay-4">
+          <button className="btn-primary btn-large" onClick={() => navigate("/register")}>
+            Start monitoring in 30s
+            <div className="btn-glow"></div>
+          </button>
+        </div>
       </section>
 
-
       {/* FEATURES */}
-
       <section className="feature-section">
-
         <h2>
-          Catch downtime before your users do
-          <span className="blue-dot">.</span>
+          Catch downtime before your users do<span className="text-accent">.</span>
         </h2>
 
         <div className="card-container">
-
           <div className="feature-card">
-            <div className="icon">🌐</div>
-            <h3>Website Monitoring</h3>
-            <p>Track uptime and response times for any HTTP or HTTPS website.</p>
+            <div className="icon-container">
+              <div className="icon">🌐</div>
+              <div className="icon-glow"></div>
+            </div>
+            <h3>Website Integrity</h3>
+            <p>Track uptime, certificates, and response times for any HTTP/HTTPS domain.</p>
           </div>
 
-          <div className="feature-card">
-            <div className="icon">🔑</div>
+          <div className="feature-card delay-1">
+            <div className="icon-container">
+              <div className="icon">⚡</div>
+              <div className="icon-glow"></div>
+            </div>
             <h3>API Monitoring</h3>
-            <p>Monitor APIs and endpoints to ensure they remain healthy.</p>
+            <p>Validate payloads and track response latency to ensure APIs remain completely healthy.</p>
           </div>
 
-          <div className="feature-card">
-            <div className="icon">📡</div>
-            <h3>Ping Monitoring</h3>
-            <p>Ensure your servers stay reachable from different locations.</p>
+          <div className="feature-card delay-2">
+            <div className="icon-container">
+              <div className="icon">📡</div>
+              <div className="icon-glow"></div>
+            </div>
+            <h3>Ping Operations</h3>
+            <p>Ensure your servers stay reachable at the network level from different global nodes.</p>
           </div>
-
         </div>
-
       </section>
 
-
       {/* FAQ */}
-
       <section className="faq">
-
         <h2>
-          Frequently asked questions
-          <span className="blue-dot">.</span>
+          Frequently asked questions<span className="text-accent">.</span>
         </h2>
 
         <div className="faq-container">
-
-          <div className="faq-item" onClick={() => toggleFaq(1)}>
-            <div className="faq-question">
-              What is SystemMonitor?
-              <span>{openFaq === 1 ? "-" : "+"}</span>
+          {[
+            { q: "What is SystemMonitor?", a: "SystemMonitor is a real-time uptime monitoring platform that continuously checks your services and alerts you instantly when downtime occurs via Webhooks, Email, or SMS." },
+            { q: "How accurate is the uptime tracking?", a: "We run checks from decentralized edge nodes every minute, ensuring 99.99% accuracy in global downtime detection and latency measuring." },
+            { q: "How do I get alerted?", a: "You can configure granular alerts to trigger instantly on failure, and set up escalations so the right person on your on-call team is notified immediately." }
+          ].map((item, i) => (
+            <div key={i} className={`faq-item ${openFaq === i ? 'open' : ''}`} onClick={() => toggleFaq(i)}>
+              <div className="faq-question">
+                {item.q}
+                <span className="toggle-icon">{openFaq === i ? "−" : "+"}</span>
+              </div>
+              <div className="faq-answer">
+                <p>{item.a}</p>
+              </div>
             </div>
-
-            {openFaq === 1 && (
-              <p>
-                SystemMonitor is a real-time uptime monitoring platform that
-                continuously checks your services and alerts you instantly when downtime occurs.
-              </p>
-            )}
-          </div>
-
-
-          <div className="faq-item" onClick={() => toggleFaq(2)}>
-            <div className="faq-question">
-              How does uptime monitoring work?
-              <span>{openFaq === 2 ? "-" : "+"}</span>
-            </div>
-
-            {openFaq === 2 && (
-              <p>
-                Our system sends requests to your service every minute
-                and detects failures or slow responses instantly.
-              </p>
-            )}
-          </div>
-
-
-          <div className="faq-item" onClick={() => toggleFaq(3)}>
-            <div className="faq-question">
-              What alerts will I receive?
-              <span>{openFaq === 3 ? "-" : "+"}</span>
-            </div>
-
-            {openFaq === 3 && (
-              <p>
-                You will receive alerts via email and integrations
-                whenever downtime is detected.
-              </p>
-            )}
-          </div>
-
+          ))}
         </div>
-
       </section>
 
-
       {/* FOOTER */}
-
       <footer className="footer">
-
+        <div className="footer-glow"></div>
         <div className="footer-container">
-
           <div className="footer-brand">
-            <h3>SystemMonitor</h3>
+            <div className="logo cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+              <span className="logo-icon">⚡</span>
+              <span>System<span className="font-bold text-accent">Monitor</span></span>
+            </div>
             <p>
-              Reliable uptime monitoring for modern developers and teams.
+              Enterprise-grade uptime monitoring for modern developers and distributed engineering teams.
             </p>
           </div>
 
           <div className="footer-links">
-
             <div>
               <h4>Monitoring</h4>
-              <p>Website Monitoring</p>
-              <p>API Monitoring</p>
-              <p>Ping Monitoring</p>
+              <p>Websites</p>
+              <p>REST APIs</p>
+              <p>Servers / Ping</p>
               <p>Status Pages</p>
             </div>
-
             <div>
               <h4>Product</h4>
               <p>Integrations</p>
-              <p>API</p>
-              <p>Incident Reports</p>
+              <p>Developer API</p>
+              <p>Uptime Reports</p>
             </div>
-
             <div>
               <h4>Company</h4>
-              <p>About</p>
-              <p>Careers</p>
-              <p>Privacy</p>
+              <p>About Us</p>
+              <p>Changelog</p>
+              <p>Privacy Policy</p>
               <p>Contact</p>
             </div>
-
           </div>
-
         </div>
 
         <div className="footer-bottom">
-          © {new Date().getFullYear()} SystemMonitor. All rights reserved.
+          © {new Date().getFullYear()} SystemMonitor. Built for resilience.
         </div>
-
       </footer>
-
     </div>
   );
 }

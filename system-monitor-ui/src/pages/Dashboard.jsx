@@ -12,9 +12,14 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const navigate = useNavigate();
   const { logout, user } = useContext(AuthContext);
+
+  useEffect(() => {
+    requestAnimationFrame(() => setMounted(true));
+  }, []);
 
   // 🔹 Fetch Services
   const fetchServices = useCallback(async () => {
@@ -75,52 +80,68 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <div className="dashboard-card">
+      {/* Animated Background Elements */}
+      <div className="bg-shape shape-1"></div>
+      <div className="bg-shape shape-2"></div>
+      <div className="bg-shape shape-3"></div>
+
+      <div className={`dashboard-card ${mounted ? 'visible' : ''}`}>
 
         {/* Header */}
         <div className="dashboard-header">
           <div>
-            <h2>Live System Dashboard</h2>
+            <h2 className="dashboard-title">
+              <span className="logo-icon">⚡</span> System Operations
+            </h2>
             {user && (
               <p className="user-email">
-                Logged in as: <strong>{user.email}</strong>
+                <span className="text-accent">Authenticated User</span>
               </p>
             )}
           </div>
 
           <div className="header-actions">
             <button
-              className="add-btn"
+              className="btn-primary"
               onClick={() => setShowModal(true)}
             >
               + Add Service
             </button>
 
             <button
-              className="logout-btn"
+              className="btn-danger"
               onClick={() => {
                 logout();
                 navigate("/login");
               }}
             >
-              Logout
+              Terminate Session
             </button>
           </div>
         </div>
 
-        {error && <div className="error">{error}</div>}
+        {error && <div className="error-banner">{error}</div>}
 
         {loading ? (
-          <p className="loading-text">Loading services...</p>
+          <div className="loading-state">
+            <div className="loader"></div>
+            <p>Gathering Telemetry...</p>
+          </div>
         ) : services.length === 0 ? (
-          <p className="empty-text">No services added yet.</p>
+          <div className="empty-state">
+            <div className="empty-icon">📡</div>
+            <h3>No Services Found</h3>
+            <p>Deploy your first tracker to begin monitoring uptime and performance.</p>
+            <button className="btn-primary mt-3" onClick={() => setShowModal(true)}>Deploy Tracker</button>
+          </div>
         ) : (
           <div className="services-grid">
-            {services.map((s) => (
+            {services.map((s, idx) => (
               <ServiceCard
                 key={s._id}
                 service={s}
                 onDelete={handleDelete}
+                index={idx}
               />
             ))}
           </div>
