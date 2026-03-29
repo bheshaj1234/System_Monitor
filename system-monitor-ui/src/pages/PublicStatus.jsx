@@ -4,6 +4,7 @@ import api from "../api/axios";
 import "./PublicStatus.css";
 
 export default function PublicStatus() {
+  console.log("Vercel Build Fix Trigger");
   const { slug } = useParams();
 
   const [data, setData] = useState(null);
