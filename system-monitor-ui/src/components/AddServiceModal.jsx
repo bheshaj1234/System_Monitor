@@ -26,7 +26,7 @@ export default function AddServiceModal({ close, refreshServices }) {
       refreshServices();
       close();
     } catch (err) {
-      setError("Failed to initialize tracker uplink.");
+      setError(err +"Failed to initialize tracker uplink.");
     } finally {
       setLoading(false);
     }
