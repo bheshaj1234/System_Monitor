@@ -16,22 +16,22 @@ export default function PublicStatus() {
     requestAnimationFrame(() => setMounted(true));
   }, []);
 
-  const fetchStatus = async () => {
-    try {
-      setLoading(true);
-      setError("");
-
-      const res = await api.get(`/public/status/${slug}`);
-      setData(res.data);
-    } catch (err) {
-      console.error(err);
-      setError("Public service endpoint not found or restricted.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await api.get(`/public/status/${slug}`);
+        setData(res.data);
+      } catch (err) {
+        console.error(err);
+        setError("Public service endpoint not found or restricted.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchStatus();
   }, [slug]);
 
