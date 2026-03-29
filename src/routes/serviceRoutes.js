@@ -8,6 +8,8 @@ const checkServiceOwnership = require("../middleware/checkServiceOwnership");
 const { redisClient } = require("../config/redis");
 const plans = require("../config/plans");
 const slugify = require("slugify");
+const axios = require("axios");
+const socket = require("../socket");
 
 // ===============================
 // ADD SERVICE (Plan Based)
@@ -128,10 +130,6 @@ router.delete("/delete/:id", auth, checkServiceOwnership, async (req, res) => {
 // ===============================
 // MANUAL CHECK SERVICE (SOCKET ENABLED)
 // ===============================
-const axios = require("axios");
-const MonitorLog = require("../models/MonitorLog");
-const socket = require("../socket");
-
 router.post("/:id/check", auth, checkServiceOwnership, async (req, res) => {
   try {
     const service = await Service.findById(req.params.id);
