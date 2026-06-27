@@ -29,7 +29,7 @@ module.exports = async (req, res, next) => {
     }
 
     if (!current) {
-      await redisClient.setEx(key, 3600, 1); // 1 hour window
+      await redisClient.setEx(key, 3600, "1"); // 1 hour window
     } else {
       await redisClient.incr(key);
     }
