@@ -13,7 +13,8 @@ module.exports = async function(req, res, next) {
       });
     }
 
-    const userPlan = plans[user.plan] || plans.FREE;
+    const planName = user.plan || "FREE";
+    const userPlan = plans[planName] || plans.FREE;
 
     const serviceCount = await Service.countDocuments({
       user: userId
@@ -21,7 +22,7 @@ module.exports = async function(req, res, next) {
 
     if (serviceCount >= userPlan.serviceLimit) {
       return res.status(403).json({
-        message: `${user.plan} plan limit reached. Upgrade to PRO`
+        message: `${planName} plan limit reached. Upgrade to PRO`
       });
     }
 

@@ -12,7 +12,11 @@ module.exports = async (req, res, next) => {
     }
 
     const user = await User.findById(req.user.id);
-    const planConfig = plans[user.plan];
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    const planName = user.plan || "FREE";
+    const planConfig = plans[planName];
 
     const key = `rate:${req.user.id}`;
 
