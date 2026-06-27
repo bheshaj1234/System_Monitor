@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import api from "../api/axios";
 import "./PublicStatus.css";
 
@@ -11,7 +11,7 @@ export default function PublicStatus() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async () => {
 
     try {
 
@@ -32,11 +32,11 @@ export default function PublicStatus() {
       setLoading(false);
 
     }
-  };
+  }, [slug]);
 
   useEffect(() => {
     fetchStatus();
-  }, [slug]);
+  }, [fetchStatus]);
 
   if (loading) {
     return (

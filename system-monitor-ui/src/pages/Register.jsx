@@ -29,7 +29,7 @@ export default function Register() {
       setError("");
       setSuccess("");
 
-      const res = await api.post("/auth/register",{
+      await api.post("/auth/register",{
         email,
         password
       });

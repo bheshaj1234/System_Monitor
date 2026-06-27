@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import api from "../api/axios";
 import HistoryTable from "../components/HistoryTable";
 import "./History.css";
@@ -16,7 +16,7 @@ export default function History() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
 
     try {
 
@@ -41,13 +41,13 @@ export default function History() {
 
     }
 
-  };
+  }, [id, page]);
 
   useEffect(() => {
 
     fetchHistory();
 
-  }, [page]);
+  }, [fetchHistory]);
 
   return (
 
