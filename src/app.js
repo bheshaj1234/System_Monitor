@@ -45,11 +45,23 @@ connectDB();
 
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL,
-      "https://system-monitor-zeta.vercel.app",
-      "http://localhost:3000"
-    ].filter(Boolean),
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "https://system-monitor-zeta.vercel.app",
+        "http://localhost:3000"
+      ];
+      if (process.env.FRONTEND_URL) {
+        allowedOrigins.push(process.env.FRONTEND_URL);
+      }
+      
+      // Allow requests with no origin (like mobile apps or curl) 
+      // or if it matches allowedOrigins, or is any Vercel preview URL
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
