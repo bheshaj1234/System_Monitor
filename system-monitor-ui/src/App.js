@@ -27,7 +27,14 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/verify-email" element={<CheckEmail />} />
-          <Route path="/history/:id" element={<History />} />
+          <Route
+            path="/history/:id"
+            element={
+              <ProtectedRoute>
+                <History />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/status/:slug" element={<PublicStatus/>}/>
           <Route path="/forgot-password" element={<ForgotPassword/>}/>
           <Route path="/reset-password/:token" element={<ResetPassword/>}/>

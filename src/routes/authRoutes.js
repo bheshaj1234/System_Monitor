@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const notifier = require("../notifications/notifier");
 const crypto = require("crypto");
+const auth = require("../middleware/auth");
 
 // REGISTER
 router.post("/register", async (req, res, next) => {
@@ -180,6 +181,20 @@ router.post("/reset-password/:token", async (req,res)=>{
     message:"Password reset successful"
   });
 
+});
+
+
+// Get currently logged-in user
+router.get("/me", auth, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
 });
 
 

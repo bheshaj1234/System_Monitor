@@ -12,6 +12,7 @@ const serviceRoutes = require("./routes/serviceRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const metricsRoutes = require("./routes/metricRoutes");
 
+const auth = require("./middleware/auth");
 const limiter = require("./middleware/rateLimiter");
 const errorHandler = require("./middleware/errorHandler");
 
@@ -50,7 +51,6 @@ app.use(
 );
 
 app.use(express.json());
-app.use(limiter);
 
 //////////////////////////////////////////////////////////
 // 🔥 API DOCUMENTATION
@@ -63,13 +63,13 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 //////////////////////////////////////////////////////////
 
 app.use("/auth", authRoutes);
-app.use("/service", serviceRoutes);
-app.use("/api/plans", planRoutes);
-app.use("/dashboard", dashboardRoutes);
-app.use("/metrics", metricsRoutes);
-app.use("/public",publicRoutes);
-app.use("/plans", planRoutes);
-app.use("/logs", logRoutes);
+app.use("/service", auth, limiter, serviceRoutes);
+app.use("/api/plans", auth, limiter, planRoutes);
+app.use("/dashboard", auth, limiter, dashboardRoutes);
+app.use("/metrics", auth, limiter, metricsRoutes);
+app.use("/public", publicRoutes);
+app.use("/plans", auth, limiter, planRoutes);
+app.use("/logs", auth, limiter, logRoutes);
 //////////////////////////////////////////////////////////
 // 🔥 HEALTH CHECK (Important for Deployment)
 //////////////////////////////////////////////////////////

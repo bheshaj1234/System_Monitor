@@ -10,6 +10,7 @@ const checkServiceOwnership = require("../middleware/checkServiceOwnership");
 const planLimit = require("../middleware/planLimit");
 
 const { redisClient } = require("../config/redis");
+const socket = require("../socket");
 
 const slugify = require("slugify");
 
@@ -17,27 +18,10 @@ const slugify = require("slugify");
 // ADD SERVICE
 ////////////////////////////////////////////////////////
 
-router.post("/add", auth, async (req, res) => {
+router.post("/add", auth, planLimit, async (req, res) => {
   try {
 
     const { name, url, interval } = req.body;
-
-    const user = await User.findById(req.user.id);
-
-    const services = await Service.find({ user: req.user.id });
-
-    const planLimits = {
-      FREE: 5,
-      PRO: 20
-    };
-
-    const limit = planLimits[user.plan] || 5;
-
-    if (services.length >= limit) {
-      return res.status(403).json({
-        message: `${user.plan} plan limit reached`
-      });
-    }
 
     // ⭐ slug generate karo
     const slug =
@@ -116,8 +100,12 @@ router.put("/update/:id", auth, async (req, res) => {
       });
     }
 
-if(redisClient){
-      await redisClient.del(`dashboard:${req.user.id}`);
+    if (redisClient && redisClient.isReady) {
+      try {
+        await redisClient.del(`dashboard:${req.user.id}`);
+      } catch (err) {
+        console.error("⚠️ Redis DEL error:", err.message);
+      }
     }
 
     res.json(service);
@@ -151,8 +139,12 @@ router.delete("/delete/:id", auth, checkServiceOwnership, async (req, res) => {
       });
     }
 
-if(redisClient){
-      await redisClient.del(`dashboard:${req.user.id}`);
+    if (redisClient && redisClient.isReady) {
+      try {
+        await redisClient.del(`dashboard:${req.user.id}`);
+      } catch (err) {
+        console.error("⚠️ Redis DEL error:", err.message);
+      }
     }
 
     res.json({
@@ -198,17 +190,12 @@ router.post("/:id/check", auth, checkServiceOwnership, async (req, res) => {
     // SOCKET REALTIME UPDATE
     ////////////////////////////////////////////////////////
 
-    const io = req.app.get("io");
-
-    if (io) {
-
-      io.emit("serviceStatusUpdate", {
-        serviceId: service._id,
-        status: service.lastStatus,
-        checkedAt: service.lastCheckedAt
-      });
-
-    }
+    socket.getIO().emit("serviceStatusUpdate", {
+      serviceId: service._id,
+      name: service.name,
+      status: service.lastStatus,
+      checkedAt: service.lastCheckedAt
+    });
 
     res.json({
       msg: "Service checked successfully",
@@ -250,8 +237,12 @@ router.put("/pause/:id", auth, checkServiceOwnership, async (req, res) => {
       });
     }
 
-if(redisClient){
-      await redisClient.del(`dashboard:${req.user.id}`);
+    if (redisClient && redisClient.isReady) {
+      try {
+        await redisClient.del(`dashboard:${req.user.id}`);
+      } catch (err) {
+        console.error("⚠️ Redis DEL error:", err.message);
+      }
     }
 
     res.json({
@@ -292,8 +283,12 @@ router.put("/resume/:id", auth, checkServiceOwnership, async (req, res) => {
       });
     }
 
-    if(redisClient){
-      await redisClient.del(`dashboard:${req.user.id}`);
+    if (redisClient && redisClient.isReady) {
+      try {
+        await redisClient.del(`dashboard:${req.user.id}`);
+      } catch (err) {
+        console.error("⚠️ Redis DEL error:", err.message);
+      }
     }
 
     res.json({

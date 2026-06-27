@@ -72,7 +72,7 @@ export default function Dashboard() {
             ? {
                 ...s,
                 lastStatus: data.status
-                  ? data.status.toLowerCase()
+                  ? data.status.toUpperCase()
                   : s.lastStatus,
                 lastCheckedAt: data.checkedAt || s.lastCheckedAt,
               }

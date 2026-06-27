@@ -17,15 +17,15 @@
 
   background: rgba(2, 6, 23, 0.9);
   backdrop-filter: blur(12px);
-
+  color: white;
   padding: 40px;
   border-radius: 18px;
 
   border: 1px solid rgba(56, 189, 248, 0.15);
 
   box-shadow:
-    0 10px 30px rgba(0,0,0,0.5),
-    0 0 30px rgba(56,189,248,0.08);
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(56, 189, 248, 0.08);
 
   transition: all 0.3s ease;
 }
@@ -78,7 +78,7 @@
 
 .add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(37,99,235,0.35);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
 }
 
 /* Logout */
@@ -97,7 +97,7 @@
 
 .logout-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(239,68,68,0.35);
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35);
 }
 
 /* ================= SERVICES GRID ================= */
@@ -135,7 +135,7 @@
 
 .check-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(34,197,94,0.3);
+  box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
 }
 
 /* History Button */
@@ -155,7 +155,7 @@
 
 .history-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(37,99,235,0.3);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
 }
 
 /* Delete Button */
@@ -175,7 +175,7 @@
 
 .delete-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(239,68,68,0.3);
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
 }
 
 /* ================= STATES ================= */
@@ -252,4 +252,35 @@
     width: 100%;
   }
 
+}
+
+/* ================= PLAN INFO CARD ================= */
+.plan-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.plan-card h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff !important;
+}
+
+.plan-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #cbd5e1 !important;
+}
+
+.plan-card b {
+  color: #38bdf8 !important;
 }

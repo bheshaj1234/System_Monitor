@@ -2,18 +2,19 @@ const express = require("express");
 const router = express.Router();
 const MonitorLog = require("../models/MonitorLog");
 const auth = require("../middleware/auth");
+const checkServiceOwnership = require("../middleware/checkServiceOwnership");
 
 // GET last 24 hours history
-router.get("/history/:serviceId", auth, async (req, res) => {
+router.get("/history/:id", auth, checkServiceOwnership, async (req, res) => {
 
   try {
 
-    const { serviceId } = req.params;
+    const { id } = req.params;
 
     const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
     const logs = await MonitorLog.find({
-      service: serviceId,
+      service: id,
       checkedAt: { $gte: last24Hours }
     }).sort({ checkedAt: 1 });
 

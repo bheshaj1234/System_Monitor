@@ -9,7 +9,9 @@ const { connectRedis } = require("./config/redis");
 async function startServer() {
   try {
     console.log("Connecting to Redis...");
-    await connectRedis();   // ✅ wait until Redis connects
+    connectRedis().catch(err => {
+      console.error("❌ Redis Initial Connection Error:", err.message);
+    });
 
     console.log("RAW ENV PORT =", process.env.PORT);
     console.log("CONFIG PORT =", config.port);

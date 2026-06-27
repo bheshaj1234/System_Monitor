@@ -23,7 +23,7 @@ const monitorServices = async () => {
         responseTime
       });
 
-      service.lastStatus = "up";
+      service.lastStatus = "UP";
       service.lastCheckedAt = new Date();
       await service.save();
 
@@ -33,7 +33,7 @@ const monitorServices = async () => {
         name: service.name,
         status: "UP",
         responseTime,
-        lastCheckedAt: new Date()
+        checkedAt: service.lastCheckedAt
       });
 
     } catch (err) {
@@ -47,11 +47,11 @@ const monitorServices = async () => {
       });
 
       // alert only on first failure
-      if (service.lastStatus !== "down") {
+      if (service.lastStatus !== "DOWN") {
         await sendAlertEmail(service.user.email, service);
       }
 
-      service.lastStatus = "down";
+      service.lastStatus = "DOWN";
       service.lastCheckedAt = new Date();
       await service.save();
 
@@ -61,7 +61,7 @@ const monitorServices = async () => {
         name: service.name,
         status: "DOWN",
         responseTime: null,
-        lastCheckedAt: new Date()
+        checkedAt: service.lastCheckedAt
       });
     }
   }

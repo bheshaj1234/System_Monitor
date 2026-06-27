@@ -6,6 +6,11 @@ module.exports = async (req, res, next) => {
   try {
     if (!req.user) return next();
 
+    if (!redisClient || !redisClient.isReady) {
+      console.warn("⚠️ Redis is offline. Bypassing rate limiting.");
+      return next();
+    }
+
     const user = await User.findById(req.user.id);
     const planConfig = plans[user.plan];
 

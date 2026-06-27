@@ -27,8 +27,14 @@ export const AuthProvider = ({ children }) => {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = (token) => {
+  const login = async (token) => {
     localStorage.setItem("token", token);
+    try {
+      const res = await api.get("/auth/me");
+      setUser(res.data);
+    } catch (err) {
+      console.error("Failed to fetch user profile", err);
+    }
   };
 
   const logout = () => {

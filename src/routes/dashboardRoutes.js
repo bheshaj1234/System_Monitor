@@ -14,7 +14,14 @@ router.get("/", auth, async (req, res, next) => {
 
     const cacheKey = `dashboard:${req.user.id}`;
 
-    const cachedData = await redisClient.get(cacheKey);
+    let cachedData = null;
+    if (redisClient && redisClient.isReady) {
+      try {
+        cachedData = await redisClient.get(cacheKey);
+      } catch (err) {
+        console.error("⚠️ Redis GET error:", err.message);
+      }
+    }
 
     if (cachedData) {
       console.log("⚡ Dashboard served from Redis Cloud");
@@ -33,11 +40,17 @@ router.get("/", auth, async (req, res, next) => {
         lastChecked: null
       };
 
-      await redisClient.setEx(
-        cacheKey,
-        planConfig.cacheTTL,
-        JSON.stringify(emptyResponse)
-      );
+      if (redisClient && redisClient.isReady) {
+        try {
+          await redisClient.setEx(
+            cacheKey,
+            planConfig.cacheTTL,
+            JSON.stringify(emptyResponse)
+          );
+        } catch (err) {
+          console.error("⚠️ Redis SETEx error:", err.message);
+        }
+      }
 
       return res.json(emptyResponse);
     }
@@ -75,11 +88,17 @@ router.get("/", auth, async (req, res, next) => {
       lastChecked
     };
 
-    await redisClient.setEx(
-      cacheKey,
-      planConfig.cacheTTL,
-      JSON.stringify(responseData)
-    );
+    if (redisClient && redisClient.isReady) {
+      try {
+        await redisClient.setEx(
+          cacheKey,
+          planConfig.cacheTTL,
+          JSON.stringify(responseData)
+        );
+      } catch (err) {
+        console.error("⚠️ Redis SETEx error:", err.message);
+      }
+    }
 
     res.json(responseData);
 

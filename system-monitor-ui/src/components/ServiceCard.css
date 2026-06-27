@@ -14,6 +14,7 @@
 .service-card.up {
   box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
 }
+
 .service-card.down {
   box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
 }

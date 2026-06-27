@@ -31,8 +31,8 @@ const serviceSchema = new mongoose.Schema({
 
   lastStatus: {
     type: String,
-    enum: ["up", "down", "unknown"],
-    default: "unknown"
+    enum: ["UP", "DOWN", "UNKNOWN"],
+    default: "UNKNOWN"
   },
 
   lastCheckedAt: {
