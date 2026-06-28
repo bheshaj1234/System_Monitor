@@ -1,66 +1,58 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import "./VerifyEmail.css";
 
-export default function VerifyEmail(){
+export default function VerifyEmail() {
+  const { token } = useParams();
+  const [status, setStatus] = useState("verifying");
 
-const { token } = useParams();
+  useEffect(() => {
+    const verifyEmail = async () => {
+      try {
+        await api.get(`/auth/verify-email/${token}`);
+        setStatus("success");
+      } catch (err) {
+        setStatus("error");
+      }
+    };
 
-const [status,setStatus] = useState("verifying");
+    verifyEmail();
+  }, [token]);
 
-useEffect(()=>{
-const verifyEmail = async()=>{
+  return (
+    <div className="verify-container">
+      <div className="verify-card">
+        {status === "verifying" && (
+          <div className="verify-content">
+            <div className="verify-spinner"></div>
+            <h2>Verifying your email...</h2>
+            <p>Please wait while we secure your account.</p>
+          </div>
+        )}
 
-  try{
+        {status === "success" && (
+          <div className="verify-content">
+            <div className="verify-icon success-icon">✓</div>
+            <h2>Email verified successfully</h2>
+            <p>Your account is now active and ready.</p>
+            <Link to="/login" className="verify-btn">
+              Go to Login
+            </Link>
+          </div>
+        )}
 
-    await api.get(`/auth/verify-email/${token}`);
-
-    setStatus("success");
-
-  }
-  catch(err){
-
-    setStatus("error");
-
-  }
-
-};
-
-verifyEmail();
-
-},[token]);
-
-return(
-<div style={{
-  display:"flex",
-  justifyContent:"center",
-  alignItems:"center",
-  height:"100vh",
-  flexDirection:"column"
-}}>
-
-  {status==="verifying" && (
-    <h2>Verifying your email...</h2>
-  )}
-
-  {status==="success" && (
-    <>
-      <h2>Email verified successfully</h2>
-      <p>You can now login</p>
-      <Link to="/login">
-        Go to Login
-      </Link>
-    </>
-  )}
-
-  {status==="error" && (
-    <>
-      <h2>Verification failed</h2>
-      <p>Invalid or expired verification link</p>
-    </>
-  )}
-
-</div>
-
-);
+        {status === "error" && (
+          <div className="verify-content">
+            <div className="verify-icon error-icon">✕</div>
+            <h2>Verification failed</h2>
+            <p>The verification link is invalid or has expired.</p>
+            <Link to="/register" className="verify-btn secondary-btn">
+              Back to Sign Up
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
