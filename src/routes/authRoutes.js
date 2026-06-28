@@ -35,8 +35,10 @@ router.post("/register", async (req, res, next) => {
       isVerified: false
     });
 
-    // 🔹 send verification email
-    await notifier.sendVerificationEmail(email, verificationToken);
+    // 🔹 send verification email (non-blocking)
+    notifier.sendVerificationEmail(email, verificationToken).catch((err) => {
+      console.error("❌ Verification email failed to send:", err.message);
+    });
 
     // generate token (existing feature untouched)
     const token = jwt.sign(
@@ -144,7 +146,10 @@ router.post("/forgot-password", async (req,res)=>{
 
   await user.save();
 
-  await notifier.sendResetPasswordEmail(user.email, resetToken);
+  // send reset email (non-blocking)
+  notifier.sendResetPasswordEmail(user.email, resetToken).catch((err) => {
+    console.error("❌ Reset password email failed to send:", err.message);
+  });
 
   res.json({
     message:"Password reset email sent"
