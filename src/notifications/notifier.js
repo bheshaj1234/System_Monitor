@@ -29,7 +29,8 @@ const sendAlertEmail = async (userEmail, service) => {
 // =============================
 const sendVerificationEmail = async (userEmail, token) => {
 
-  const verifyLink = `http://localhost:3000/verify-email/${token}`;
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+  const verifyLink = `${frontendUrl}/verify-email/${token}`;
 
   await transporter.sendMail({
     from: `"System Monitor" <${process.env.ALERT_EMAIL}>`,
@@ -61,8 +62,8 @@ const sendVerificationEmail = async (userEmail, token) => {
 // =============================
 const sendResetPasswordEmail = async (email, token)=>{
 
-  const resetLink =
-  `http://localhost:3000/reset-password/${token}`;
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+  const resetLink = `${frontendUrl}/reset-password/${token}`;
 
   await transporter.sendMail({
 
